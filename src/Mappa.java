@@ -55,7 +55,7 @@ public class Mappa extends JFrame {
     private boolean isHighlighting = false; // <--- NUOVO: se true, evidenzia soltanto
 
     public Mappa() {
-        super("Mappa 100x100 con Save/Load + Imposta Dimensioni");
+        super("BrixWorld");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setExtendedState(JFrame.MAXIMIZED_BOTH); // fullscreen opzionale
 
@@ -72,6 +72,8 @@ public class Mappa extends JFrame {
         // Bottone "Save"
         JButton btnSave = new JButton("Save");
         formatButton(btnSave, 160, 40, Color.CYAN, Color.BLACK);
+        btnSave.setForeground(Color.BLACK);
+        btnSave.setBackground(Color.CYAN);
         btnSave.addActionListener(e -> onSave());
         leftContainer.add(btnSave);
         leftContainer.add(Box.createVerticalStrut(2));
@@ -79,6 +81,8 @@ public class Mappa extends JFrame {
         // Bottone "Load"
         JButton btnLoad = new JButton("Load");
         formatButton(btnLoad, 160, 40, Color.PINK, Color.BLACK);
+        btnLoad.setForeground(Color.BLACK);
+        btnLoad.setBackground(Color.PINK);
         btnLoad.addActionListener(e -> onLoad());
         leftContainer.add(btnLoad);
         leftContainer.add(Box.createVerticalStrut(5));
@@ -94,6 +98,8 @@ public class Mappa extends JFrame {
         // Bottone "Nuovo Personaggio"
         JButton btnNuovoPersonaggio = new JButton("Nuovo Personaggio");
         formatButton(btnNuovoPersonaggio, 160, 40, Color.LIGHT_GRAY, Color.BLACK);
+        btnNuovoPersonaggio.setForeground(Color.BLACK);
+        btnNuovoPersonaggio.setBackground(Color.LIGHT_GRAY);
         btnNuovoPersonaggio.addActionListener(e -> creaNuovoPersonaggio());
 
         // Ordine: Save, Nuovo Personaggio, Imposta Dimensioni, Load
@@ -103,6 +109,8 @@ public class Mappa extends JFrame {
         // Bottone "Cancella (singola)"
         JButton btnCancellaSingola = new JButton("Cancella (singola)");
         formatButton(btnCancellaSingola, 160, 40, SAND, Color.BLACK);
+        btnCancellaSingola.setForeground(Color.BLACK);
+        btnCancellaSingola.setBackground(SAND);
         btnCancellaSingola.addActionListener(e -> {
             // Seleziona sabbia per pittura
             selectedColor = SAND;
@@ -116,6 +124,8 @@ public class Mappa extends JFrame {
         // Bottone "Cancella Tutto"
         JButton btnCancellaTutto = new JButton("Cancella Tutto");
         formatButton(btnCancellaTutto, 160, 40, Color.WHITE, Color.BLACK);
+        btnCancellaTutto.setForeground(Color.BLACK);
+        btnCancellaTutto.setBackground(Color.WHITE);
         btnCancellaTutto.addActionListener(e -> {
             int result = JOptionPane.showConfirmDialog(
                     Mappa.this,
@@ -133,6 +143,8 @@ public class Mappa extends JFrame {
         // Bottone "Parete"
         JButton btnParete = new JButton("Parete");
         formatButton(btnParete, 160, 40, PARETE, Color.WHITE);
+        btnParete.setForeground(Color.WHITE);
+        btnParete.setBackground(PARETE);
         btnParete.addActionListener(e -> {
             selectedColor = PARETE;
             selectedCharacter = null;
@@ -144,6 +156,8 @@ public class Mappa extends JFrame {
         // Bottone "3/4 Copertura"
         JButton btn34Cop = new JButton("3/4 Copertura");
         formatButton(btn34Cop, 160, 40, COPERTURA_3_4, Color.WHITE);
+        btn34Cop.setForeground(Color.WHITE);
+        btn34Cop.setBackground(COPERTURA_3_4);
         btn34Cop.addActionListener(e -> {
             selectedColor = COPERTURA_3_4;
             selectedCharacter = null;
@@ -155,6 +169,8 @@ public class Mappa extends JFrame {
         // Bottone "1/2 Copertura"
         JButton btn12Cop = new JButton("1/2 Copertura");
         formatButton(btn12Cop, 160, 40, COPERTURA_1_2, Color.BLACK);
+        btn12Cop.setForeground(Color.BLACK);
+        btn12Cop.setBackground(COPERTURA_1_2);
         btn12Cop.addActionListener(e -> {
             selectedColor = COPERTURA_1_2;
             selectedCharacter = null;
@@ -166,6 +182,8 @@ public class Mappa extends JFrame {
         // Bottone "Nemico"
         JButton btnNemico = new JButton("Nemico");
         formatButton(btnNemico, 160, 40, NEMICO, Color.BLACK);
+        btnNemico.setForeground(Color.BLACK);
+        btnNemico.setBackground(NEMICO);
         btnNemico.addActionListener(e -> {
             selectedColor = NEMICO;
             selectedCharacter = null;
