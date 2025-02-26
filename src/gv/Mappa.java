@@ -49,12 +49,12 @@ public class Mappa extends JFrame {
     // Pannello per i personaggi a sinistra
     private final JPanel charactersPanel = new JPanel();
 
-    // Flag modalità
+    // Flag per modalità
     private boolean isPainting = false;
     private boolean isErasing = false;
-    private boolean isHighlighting = false; // se true, evidenzia solo
+    private boolean isHighlighting = false; // se true, evidenzia soltanto
 
-    // Riferimento alla finestra secondaria
+    // Riferimento alla finestra secondaria (se aperta)
     private static MappaSecondaria secondFrame = null;
 
     public Mappa() {
@@ -205,11 +205,9 @@ public class Mappa extends JFrame {
         leftContainer.add(charactersPanel);
 
         // ScrollPane sinistro (larghezza 180 px)
-        JScrollPane leftScrollPane = new JScrollPane(
-                leftContainer,
+        JScrollPane leftScrollPane = new JScrollPane(leftContainer,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER
-        );
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         leftScrollPane.getViewport().setBackground(LOCANDA_LIGHT);
         leftScrollPane.setPreferredSize(new Dimension(180, 0));
         getContentPane().add(leftScrollPane, BorderLayout.WEST);
@@ -219,7 +217,6 @@ public class Mappa extends JFrame {
         // -------------------------
         centerPanel = new ScrollablePanel(new GridLayout(rows, cols, gap, gap));
         centerPanel.setBackground(LOCANDA_LIGHT);
-
         int totalWidth = cols * cellSize + (cols - 1) * gap;
         int totalHeight = rows * cellSize + (rows - 1) * gap;
         centerPanel.setPreferredSize(new Dimension(totalWidth, totalHeight));
@@ -232,33 +229,29 @@ public class Mappa extends JFrame {
             }
         }
 
-        centerScrollPane = new JScrollPane(
-                centerPanel,
+        centerScrollPane = new JScrollPane(centerPanel,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
-        );
-        // Imposta le dimensioni delle scrollbar
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         centerScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(30, 0));
         centerScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 30));
-        // Personalizza i colori delle scrollbar
         centerScrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
             @Override
             protected void configureScrollBarColors() {
-                this.thumbColor = new Color(139, 69, 19);
-                this.trackColor = new Color(222, 184, 135);
+                thumbColor = new Color(139, 69, 19);
+                trackColor = new Color(222, 184, 135);
             }
         });
         centerScrollPane.getHorizontalScrollBar().setUI(new BasicScrollBarUI() {
             @Override
             protected void configureScrollBarColors() {
-                this.thumbColor = new Color(139, 69, 19);
-                this.trackColor = new Color(222, 184, 135);
+                thumbColor = new Color(139, 69, 19);
+                trackColor = new Color(222, 184, 135);
             }
         });
         centerScrollPane.getViewport().setBackground(LOCANDA_LIGHT);
         getContentPane().add(centerScrollPane, BorderLayout.CENTER);
 
-        // Aggiungiamo i listener per sincronizzare lo scrolling nella finestra secondaria
+        // Sincronizza lo scrolling con la finestra secondaria
         centerScrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
             if (secondFrame != null) {
                 secondFrame.syncScrollVertical(e.getValue());
@@ -273,7 +266,7 @@ public class Mappa extends JFrame {
         setVisible(true);
     }
 
-    // Metodo per aggiornare la finestra secondaria (per la cella in posizione (r,c))
+    // Metodo per aggiornare la finestra secondaria per la cella (r, c)
     private void updateSecondaryFrame(int r, int c) {
         if (secondFrame != null) {
             secondFrame.updateCell(r, c, grid[r][c].getBaseColor(), grid[r][c].getOccupantCharacter());
@@ -516,7 +509,7 @@ public class Mappa extends JFrame {
         button.setFocusPainted(false);
         button.setBackground(bg);
         button.setForeground(fg);
-        button.setOpaque(true);
+        button.setOpaque(true); // importante per il CrossPlatform LookAndFeel
         Dimension d = new Dimension(width, height);
         button.setPreferredSize(d);
         button.setMinimumSize(d);
@@ -731,13 +724,15 @@ class MappaSecondaria extends JFrame {
 
     public MappaSecondaria(int rows, int cols, int cellSize, int gap) {
         super("BrixWorld - Finestra 2");
-        this.rows = rows;
-        this.cols = cols;
-        this.cellSize = cellSize;
-        this.gap = gap;
+        // Rimuovo le decorazioni per lasciare la finestra con il look di default
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 800);
         setLocationRelativeTo(null);
+
+        this.rows=rows;
+        this.cols=cols;
+        this.cellSize=cellSize;
+        this.gap=gap;
 
         centerPanel = new ScrollablePanel(new GridLayout(rows, cols, gap, gap));
         centerPanel.setBackground(LOCANDA_LIGHT);
@@ -753,26 +748,10 @@ class MappaSecondaria extends JFrame {
             }
         }
 
+        // Nella finestra secondaria non mostriamo le scrollbar, ma lasciamo il viewport sincronizzato
         centerScrollPane = new JScrollPane(centerPanel,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        // Imposta dimensioni e colori delle scrollbar (uguali alla finestra principale)
-        centerScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(30, 0));
-        centerScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 30));
-        centerScrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
-            @Override
-            protected void configureScrollBarColors() {
-                this.thumbColor = new Color(139, 69, 19);
-                this.trackColor = new Color(222, 184, 135);
-            }
-        });
-        centerScrollPane.getHorizontalScrollBar().setUI(new BasicScrollBarUI() {
-            @Override
-            protected void configureScrollBarColors() {
-                this.thumbColor = new Color(139, 69, 19);
-                this.trackColor = new Color(222, 184, 135);
-            }
-        });
+                JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         centerScrollPane.getViewport().setBackground(LOCANDA_LIGHT);
         add(centerScrollPane, BorderLayout.CENTER);
 
@@ -808,16 +787,16 @@ class MappaSecondaria extends JFrame {
         centerScrollPane.repaint();
     }
 
-    // Metodi per sincronizzare lo scrolling dalla finestra principale
+    // Metodo per sincronizzare lo scrolling (anche se non mostriamo le scrollbar)
     public void syncScrollVertical(int value) {
-        centerScrollPane.getVerticalScrollBar().setValue(value);
+        centerScrollPane.getViewport().setViewPosition(new Point(centerScrollPane.getViewport().getViewPosition().x, value));
     }
     public void syncScrollHorizontal(int value) {
-        centerScrollPane.getHorizontalScrollBar().setValue(value);
+        centerScrollPane.getViewport().setViewPosition(new Point(value, centerScrollPane.getViewport().getViewPosition().y));
     }
 }
 
-// Cella per la finestra secondaria (non interattiva)
+// Cella per la finestra secondaria (DisplayCell) senza bordo, con sfondo SAND
 class DisplayCell extends JLabel {
     public DisplayCell(int size) {
         setOpaque(true);
@@ -825,7 +804,7 @@ class DisplayCell extends JLabel {
         setPreferredSize(new Dimension(size, size));
         setHorizontalAlignment(SwingConstants.CENTER);
         setVerticalAlignment(SwingConstants.CENTER);
-        // Non impostiamo bordo per avere lo stesso look della finestra principale
+        // Rimosso il bordo per avere lo stesso look delle celle della mappa principale
         setFont(new Font("SansSerif", Font.BOLD, 10));
     }
 }
