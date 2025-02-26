@@ -52,7 +52,7 @@ public class Mappa extends JFrame {
     // Flag per la modalità "pennello" (sinistro), "cancellazione" (destro), e "solo evidenzia"
     private boolean isPainting = false;
     private boolean isErasing = false;
-    private boolean isHighlighting = false; // <--- NUOVO: se true, evidenzia soltanto
+    private boolean isHighlighting = false; // se true, evidenzia soltanto
 
     public Mappa() {
         super("BrixWorld");
@@ -72,8 +72,6 @@ public class Mappa extends JFrame {
         // Bottone "Save"
         JButton btnSave = new JButton("Save");
         formatButton(btnSave, 160, 40, Color.CYAN, Color.BLACK);
-        btnSave.setForeground(Color.BLACK);
-        btnSave.setBackground(Color.CYAN);
         btnSave.addActionListener(e -> onSave());
         leftContainer.add(btnSave);
         leftContainer.add(Box.createVerticalStrut(2));
@@ -81,12 +79,9 @@ public class Mappa extends JFrame {
         // Bottone "Load"
         JButton btnLoad = new JButton("Load");
         formatButton(btnLoad, 160, 40, Color.PINK, Color.BLACK);
-        btnLoad.setForeground(Color.BLACK);
-        btnLoad.setBackground(Color.PINK);
         btnLoad.addActionListener(e -> onLoad());
         leftContainer.add(btnLoad);
         leftContainer.add(Box.createVerticalStrut(5));
-
 
         // Bottone "Imposta Dimensioni"
         JButton btnImpostaDimensioni = new JButton("Imposta Dimensioni");
@@ -98,19 +93,13 @@ public class Mappa extends JFrame {
         // Bottone "Nuovo Personaggio"
         JButton btnNuovoPersonaggio = new JButton("Nuovo Personaggio");
         formatButton(btnNuovoPersonaggio, 160, 40, Color.LIGHT_GRAY, Color.BLACK);
-        btnNuovoPersonaggio.setForeground(Color.BLACK);
-        btnNuovoPersonaggio.setBackground(Color.LIGHT_GRAY);
         btnNuovoPersonaggio.addActionListener(e -> creaNuovoPersonaggio());
-
-        // Ordine: Save, Nuovo Personaggio, Imposta Dimensioni, Load
         leftContainer.add(btnNuovoPersonaggio);
         leftContainer.add(Box.createVerticalStrut(5));
 
         // Bottone "Cancella (singola)"
         JButton btnCancellaSingola = new JButton("Cancella (singola)");
         formatButton(btnCancellaSingola, 160, 40, SAND, Color.BLACK);
-        btnCancellaSingola.setForeground(Color.BLACK);
-        btnCancellaSingola.setBackground(SAND);
         btnCancellaSingola.addActionListener(e -> {
             // Seleziona sabbia per pittura
             selectedColor = SAND;
@@ -124,8 +113,6 @@ public class Mappa extends JFrame {
         // Bottone "Cancella Tutto"
         JButton btnCancellaTutto = new JButton("Cancella Tutto");
         formatButton(btnCancellaTutto, 160, 40, Color.WHITE, Color.BLACK);
-        btnCancellaTutto.setForeground(Color.BLACK);
-        btnCancellaTutto.setBackground(Color.WHITE);
         btnCancellaTutto.addActionListener(e -> {
             int result = JOptionPane.showConfirmDialog(
                     Mappa.this,
@@ -143,8 +130,6 @@ public class Mappa extends JFrame {
         // Bottone "Parete"
         JButton btnParete = new JButton("Parete");
         formatButton(btnParete, 160, 40, PARETE, Color.WHITE);
-        btnParete.setForeground(Color.WHITE);
-        btnParete.setBackground(PARETE);
         btnParete.addActionListener(e -> {
             selectedColor = PARETE;
             selectedCharacter = null;
@@ -156,8 +141,6 @@ public class Mappa extends JFrame {
         // Bottone "3/4 Copertura"
         JButton btn34Cop = new JButton("3/4 Copertura");
         formatButton(btn34Cop, 160, 40, COPERTURA_3_4, Color.WHITE);
-        btn34Cop.setForeground(Color.WHITE);
-        btn34Cop.setBackground(COPERTURA_3_4);
         btn34Cop.addActionListener(e -> {
             selectedColor = COPERTURA_3_4;
             selectedCharacter = null;
@@ -169,8 +152,6 @@ public class Mappa extends JFrame {
         // Bottone "1/2 Copertura"
         JButton btn12Cop = new JButton("1/2 Copertura");
         formatButton(btn12Cop, 160, 40, COPERTURA_1_2, Color.BLACK);
-        btn12Cop.setForeground(Color.BLACK);
-        btn12Cop.setBackground(COPERTURA_1_2);
         btn12Cop.addActionListener(e -> {
             selectedColor = COPERTURA_1_2;
             selectedCharacter = null;
@@ -182,8 +163,6 @@ public class Mappa extends JFrame {
         // Bottone "Nemico"
         JButton btnNemico = new JButton("Nemico");
         formatButton(btnNemico, 160, 40, NEMICO, Color.BLACK);
-        btnNemico.setForeground(Color.BLACK);
-        btnNemico.setBackground(NEMICO);
         btnNemico.addActionListener(e -> {
             selectedColor = NEMICO;
             selectedCharacter = null;
@@ -192,9 +171,7 @@ public class Mappa extends JFrame {
         leftContainer.add(btnNemico);
         leftContainer.add(Box.createVerticalStrut(5));
 
-        // ---------------------------
-        // NUOVO BOTTONE "EVIDENZIA"
-        // ---------------------------
+        // Bottone "Evidenzia"
         JButton btnEvidenzia = new JButton("Evidenzia");
         formatButton(btnEvidenzia, 160, 40, Color.WHITE, Color.WHITE);
         btnEvidenzia.addActionListener(e -> {
@@ -208,7 +185,6 @@ public class Mappa extends JFrame {
         });
         leftContainer.add(btnEvidenzia);
         leftContainer.add(Box.createVerticalStrut(5));
-        // Fine nuovo bottone
 
         // Pannello personaggi
         charactersPanel.setLayout(new BoxLayout(charactersPanel, BoxLayout.Y_AXIS));
@@ -249,21 +225,18 @@ public class Mappa extends JFrame {
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
         );
-        // Per la barra verticale (modifica la larghezza)
+        // Aumentiamo lo spessore delle barre
         centerScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(30, 0));
-// Per la barra orizzontale (modifica l'altezza)
         centerScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 30));
-        // Per la barra verticale:
+
+        // Personalizziamo i colori delle scrollbar
         centerScrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
             @Override
             protected void configureScrollBarColors() {
-                // Imposta il colore del "thumb" (la parte mobile) e del "track" (la scorrimento)
-                this.thumbColor = new Color(139, 69, 19); // un marrone (SaddleBrown)
-                this.trackColor = new Color(222, 184, 135); // ad esempio BurlyWood
+                this.thumbColor = new Color(139, 69, 19); // marrone scuro
+                this.trackColor = new Color(222, 184, 135); // marrone più chiaro
             }
         });
-
-// Per la barra orizzontale:
         centerScrollPane.getHorizontalScrollBar().setUI(new BasicScrollBarUI() {
             @Override
             protected void configureScrollBarColors() {
@@ -523,6 +496,7 @@ public class Mappa extends JFrame {
         button.setFocusPainted(false);
         button.setBackground(bg);
         button.setForeground(fg);
+        button.setOpaque(true); // importante su macOS con cross LAF
         Dimension d = new Dimension(width, height);
         button.setPreferredSize(d);
         button.setMinimumSize(d);
@@ -714,6 +688,13 @@ public class Mappa extends JFrame {
     }
 
     public static void main(String[] args) {
+        try {
+            // Forziamo il Look & Feel cross-platform: su macOS i bottoni rispetteranno i colori custom
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         SwingUtilities.invokeLater(Mappa::new);
     }
 }
