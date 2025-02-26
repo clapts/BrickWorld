@@ -19,23 +19,22 @@ public class Mappa extends JFrame {
     private static final Color COPERTURA_1_2 = new Color(150, 150, 150);
     private static final Color NEMICO = new Color(255, 127, 80);  // rosso corallo
 
-    // Marrone chiaro di sfondo
+    // Marrone chiaro di sfondo (locanda)
     private static final Color LOCANDA_LIGHT = new Color(0xDEB887);
 
-    // Variabili per la selezione corrente (pennello e personaggi)
+    // Variabili per la selezione corrente
     private Color selectedColor = null;
     private String selectedCharacter = null;
 
-    // Mappa di [personaggio -> posizione in griglia]
+    // Mappa dei personaggi e elenco
     private final Map<String, Point> characterPositions = new HashMap<>();
-    // Elenco dei personaggi creati
     private final List<String> charactersList = new ArrayList<>();
 
-    // Numero di righe e colonne (100x100)
+    // Dimensioni griglia 100x100
     private final int rows = 100;
     private final int cols = 100;
 
-    // Dimensione delle celle (variabile, può cambiare con "Imposta Dimensioni")
+    // Dimensione delle celle (variabile)
     private int cellSize = 40;
     // Gap tra le celle
     private final int gap = 1;
@@ -43,20 +42,19 @@ public class Mappa extends JFrame {
     // Matrice di bottoni (celle)
     private final CellButton[][] grid = new CellButton[rows][cols];
 
-    // Pannello che contiene le celle (finestra principale)
+    // Pannello centrale e scrollPane (finestra principale)
     private final ScrollablePanel centerPanel;
-    // ScrollPane al centro
     private final JScrollPane centerScrollPane;
 
     // Pannello per i personaggi a sinistra
     private final JPanel charactersPanel = new JPanel();
 
-    // Flag per le modalità
+    // Flag modalità
     private boolean isPainting = false;
     private boolean isErasing = false;
-    private boolean isHighlighting = false; // se true, evidenzia soltanto
+    private boolean isHighlighting = false; // se true, evidenzia solo
 
-    // Riferimento alla finestra secondaria (se aperta)
+    // Riferimento alla finestra secondaria
     private static MappaSecondaria secondFrame = null;
 
     public Mappa() {
@@ -87,35 +85,35 @@ public class Mappa extends JFrame {
         leftContainer.add(btnFinestra2);
         leftContainer.add(Box.createVerticalStrut(5));
 
-        // Bottone "Save"
+        // Pulsante "Save"
         JButton btnSave = new JButton("Save");
         formatButton(btnSave, 160, 40, Color.CYAN, Color.BLACK);
         btnSave.addActionListener(e -> onSave());
         leftContainer.add(btnSave);
         leftContainer.add(Box.createVerticalStrut(2));
 
-        // Bottone "Load"
+        // Pulsante "Load"
         JButton btnLoad = new JButton("Load");
         formatButton(btnLoad, 160, 40, Color.PINK, Color.BLACK);
         btnLoad.addActionListener(e -> onLoad());
         leftContainer.add(btnLoad);
         leftContainer.add(Box.createVerticalStrut(5));
 
-        // Bottone "Imposta Dimensioni"
+        // Pulsante "Imposta Dimensioni"
         JButton btnImpostaDimensioni = new JButton("Imposta Dimensioni");
         formatButton(btnImpostaDimensioni, 160, 40, Color.WHITE, Color.BLACK);
         btnImpostaDimensioni.addActionListener(e -> cambiaDimensioniCelle());
         leftContainer.add(btnImpostaDimensioni);
         leftContainer.add(Box.createVerticalStrut(5));
 
-        // Bottone "Nuovo Personaggio"
+        // Pulsante "Nuovo Personaggio"
         JButton btnNuovoPersonaggio = new JButton("Nuovo Personaggio");
         formatButton(btnNuovoPersonaggio, 160, 40, Color.LIGHT_GRAY, Color.BLACK);
         btnNuovoPersonaggio.addActionListener(e -> creaNuovoPersonaggio());
         leftContainer.add(btnNuovoPersonaggio);
         leftContainer.add(Box.createVerticalStrut(5));
 
-        // Bottone "Cancella (singola)"
+        // Pulsante "Cancella (singola)"
         JButton btnCancellaSingola = new JButton("Cancella (singola)");
         formatButton(btnCancellaSingola, 160, 40, SAND, Color.BLACK);
         btnCancellaSingola.addActionListener(e -> {
@@ -126,7 +124,7 @@ public class Mappa extends JFrame {
         leftContainer.add(btnCancellaSingola);
         leftContainer.add(Box.createVerticalStrut(5));
 
-        // Bottone "Cancella Tutto"
+        // Pulsante "Cancella Tutto"
         JButton btnCancellaTutto = new JButton("Cancella Tutto");
         formatButton(btnCancellaTutto, 160, 40, Color.WHITE, Color.BLACK);
         btnCancellaTutto.addActionListener(e -> {
@@ -143,7 +141,7 @@ public class Mappa extends JFrame {
         leftContainer.add(btnCancellaTutto);
         leftContainer.add(Box.createVerticalStrut(5));
 
-        // Bottone "Parete"
+        // Pulsante "Parete"
         JButton btnParete = new JButton("Parete");
         formatButton(btnParete, 160, 40, PARETE, Color.WHITE);
         btnParete.addActionListener(e -> {
@@ -154,7 +152,7 @@ public class Mappa extends JFrame {
         leftContainer.add(btnParete);
         leftContainer.add(Box.createVerticalStrut(5));
 
-        // Bottone "3/4 Copertura"
+        // Pulsante "3/4 Copertura"
         JButton btn34Cop = new JButton("3/4 Copertura");
         formatButton(btn34Cop, 160, 40, COPERTURA_3_4, Color.WHITE);
         btn34Cop.addActionListener(e -> {
@@ -165,7 +163,7 @@ public class Mappa extends JFrame {
         leftContainer.add(btn34Cop);
         leftContainer.add(Box.createVerticalStrut(5));
 
-        // Bottone "1/2 Copertura"
+        // Pulsante "1/2 Copertura"
         JButton btn12Cop = new JButton("1/2 Copertura");
         formatButton(btn12Cop, 160, 40, COPERTURA_1_2, Color.BLACK);
         btn12Cop.addActionListener(e -> {
@@ -176,7 +174,7 @@ public class Mappa extends JFrame {
         leftContainer.add(btn12Cop);
         leftContainer.add(Box.createVerticalStrut(5));
 
-        // Bottone "Nemico"
+        // Pulsante "Nemico"
         JButton btnNemico = new JButton("Nemico");
         formatButton(btnNemico, 160, 40, NEMICO, Color.BLACK);
         btnNemico.addActionListener(e -> {
@@ -187,7 +185,7 @@ public class Mappa extends JFrame {
         leftContainer.add(btnNemico);
         leftContainer.add(Box.createVerticalStrut(5));
 
-        // Bottone "Evidenzia"
+        // Pulsante "Evidenzia"
         JButton btnEvidenzia = new JButton("Evidenzia");
         formatButton(btnEvidenzia, 160, 40, Color.WHITE, Color.WHITE);
         btnEvidenzia.addActionListener(e -> {
@@ -239,10 +237,10 @@ public class Mappa extends JFrame {
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED
         );
-        // Impostiamo le dimensioni delle scrollbar
+        // Imposta le dimensioni delle scrollbar
         centerScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(30, 0));
         centerScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 30));
-        // Personalizziamo i colori delle scrollbar
+        // Personalizza i colori delle scrollbar
         centerScrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
             @Override
             protected void configureScrollBarColors() {
@@ -259,6 +257,18 @@ public class Mappa extends JFrame {
         });
         centerScrollPane.getViewport().setBackground(LOCANDA_LIGHT);
         getContentPane().add(centerScrollPane, BorderLayout.CENTER);
+
+        // Aggiungiamo i listener per sincronizzare lo scrolling nella finestra secondaria
+        centerScrollPane.getVerticalScrollBar().addAdjustmentListener(e -> {
+            if (secondFrame != null) {
+                secondFrame.syncScrollVertical(e.getValue());
+            }
+        });
+        centerScrollPane.getHorizontalScrollBar().addAdjustmentListener(e -> {
+            if (secondFrame != null) {
+                secondFrame.syncScrollHorizontal(e.getValue());
+            }
+        });
 
         setVisible(true);
     }
@@ -283,10 +293,9 @@ public class Mappa extends JFrame {
                 return;
             }
             cellSize = newSize;
-            // Aggiorniamo ciascuna cella
             for (int r = 0; r < rows; r++) {
                 for (int c = 0; c < cols; c++) {
-                    grid[r][c].aggiornaDimensione(cellSize);
+                    grid[r][c].aggiornaDimensioniCella(cellSize);
                     updateSecondaryFrame(r, c);
                 }
             }
@@ -297,7 +306,6 @@ public class Mappa extends JFrame {
             centerPanel.repaint();
             centerScrollPane.revalidate();
             centerScrollPane.repaint();
-            // Aggiorna anche la finestra secondaria se aperta
             if (secondFrame != null) {
                 secondFrame.updateDimensions(cellSize);
             }
@@ -508,7 +516,7 @@ public class Mappa extends JFrame {
         button.setFocusPainted(false);
         button.setBackground(bg);
         button.setForeground(fg);
-        button.setOpaque(true); // Importante per il CrossPlatform LookAndFeel
+        button.setOpaque(true);
         Dimension d = new Dimension(width, height);
         button.setPreferredSize(d);
         button.setMinimumSize(d);
@@ -546,7 +554,7 @@ public class Mappa extends JFrame {
     }
 
     // ---------------------------
-    // Celle
+    // Celle interattive
     // ---------------------------
     private class CellButton extends JButton {
         private final int row;
@@ -632,7 +640,7 @@ public class Mappa extends JFrame {
             setMaximumSize(d);
         }
 
-        public void aggiornaDimensione(int newSize) {
+        public void aggiornaDimensioniCella(int newSize) {
             setDimensioniCella(newSize);
         }
 
@@ -707,7 +715,9 @@ public class Mappa extends JFrame {
     }
 }
 
-// Classe per la finestra secondaria (solo mappa)
+// ---------------------------
+// Finestra secondaria (solo mappa)
+// ---------------------------
 class MappaSecondaria extends JFrame {
 
     private final int rows;
@@ -746,13 +756,30 @@ class MappaSecondaria extends JFrame {
         centerScrollPane = new JScrollPane(centerPanel,
                 JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        // Imposta dimensioni e colori delle scrollbar (uguali alla finestra principale)
+        centerScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(30, 0));
+        centerScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 30));
+        centerScrollPane.getVerticalScrollBar().setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(139, 69, 19);
+                this.trackColor = new Color(222, 184, 135);
+            }
+        });
+        centerScrollPane.getHorizontalScrollBar().setUI(new BasicScrollBarUI() {
+            @Override
+            protected void configureScrollBarColors() {
+                this.thumbColor = new Color(139, 69, 19);
+                this.trackColor = new Color(222, 184, 135);
+            }
+        });
         centerScrollPane.getViewport().setBackground(LOCANDA_LIGHT);
         add(centerScrollPane, BorderLayout.CENTER);
 
         setVisible(true);
     }
 
-    // Metodo per aggiornare la cella nella finestra secondaria
+    // Metodo per aggiornare una cella
     public void updateCell(int r, int c, Color color, String occupant) {
         if (r < 0 || r >= rows || c < 0 || c >= cols) return;
         displayGrid[r][c].setBackground(color);
@@ -763,7 +790,7 @@ class MappaSecondaria extends JFrame {
         }
     }
 
-    // Aggiorna le dimensioni della griglia nella finestra secondaria
+    // Aggiorna le dimensioni della griglia
     public void updateDimensions(int newCellSize) {
         this.cellSize = newCellSize;
         int totalWidth = cols * cellSize + (cols - 1) * gap;
@@ -780,10 +807,17 @@ class MappaSecondaria extends JFrame {
         centerScrollPane.revalidate();
         centerScrollPane.repaint();
     }
+
+    // Metodi per sincronizzare lo scrolling dalla finestra principale
+    public void syncScrollVertical(int value) {
+        centerScrollPane.getVerticalScrollBar().setValue(value);
+    }
+    public void syncScrollHorizontal(int value) {
+        centerScrollPane.getHorizontalScrollBar().setValue(value);
+    }
 }
 
-// Cella per la finestra secondaria (DisplayCell)
-// Modificata per non avere bordi e avere lo stesso look delle celle della finestra principale
+// Cella per la finestra secondaria (non interattiva)
 class DisplayCell extends JLabel {
     public DisplayCell(int size) {
         setOpaque(true);
@@ -791,13 +825,12 @@ class DisplayCell extends JLabel {
         setPreferredSize(new Dimension(size, size));
         setHorizontalAlignment(SwingConstants.CENTER);
         setVerticalAlignment(SwingConstants.CENTER);
-        // Rimosso il bordo per farle apparire come le celle della mappa principale
-        // setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+        // Non impostiamo bordo per avere lo stesso look della finestra principale
         setFont(new Font("SansSerif", Font.BOLD, 10));
     }
 }
 
-// ScrollablePanel (uguale a quello usato nella classe principale)
+// ScrollablePanel (uguale a quello usato nella finestra principale)
 class ScrollablePanel extends JPanel implements Scrollable {
     public ScrollablePanel(LayoutManager layout) {
         super(layout);
