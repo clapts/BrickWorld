@@ -509,7 +509,7 @@ public class Mappa extends JFrame {
         button.setFocusPainted(false);
         button.setBackground(bg);
         button.setForeground(fg);
-        button.setOpaque(true); // importante per il CrossPlatform LookAndFeel
+        button.setOpaque(true);
         Dimension d = new Dimension(width, height);
         button.setPreferredSize(d);
         button.setMinimumSize(d);
@@ -590,6 +590,10 @@ public class Mappa extends JFrame {
                     } else {
                         isPainting = false;
                     }
+                    // Al termine dell'hover, rimuoviamo l'evidenziazione dalla cella nella seconda finestra
+                    if (secondFrame != null) {
+                        secondFrame.unhighlightCell(row, col);
+                    }
                 }
                 @Override
                 public void mouseEntered(MouseEvent e) {
@@ -604,10 +608,17 @@ public class Mappa extends JFrame {
                     } else {
                         setBackground(shadeColor(baseColor, -30));
                     }
+                    // Evidenzia la cella corrispondente nella finestra secondaria
+                    if (secondFrame != null) {
+                        secondFrame.highlightCell(row, col);
+                    }
                 }
                 @Override
                 public void mouseExited(MouseEvent e) {
                     setBackground(baseColor);
+                    if (secondFrame != null) {
+                        secondFrame.unhighlightCell(row, col);
+                    }
                 }
             });
 
@@ -724,15 +735,14 @@ class MappaSecondaria extends JFrame {
 
     public MappaSecondaria(int rows, int cols, int cellSize, int gap) {
         super("BrixWorld - Finestra 2");
-        // Rimuovo le decorazioni per lasciare la finestra con il look di default
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(800, 800);
         setLocationRelativeTo(null);
 
-        this.rows=rows;
-        this.cols=cols;
-        this.cellSize=cellSize;
-        this.gap=gap;
+        this.rows = rows;
+        this.cols = cols;
+        this.cellSize = cellSize;
+        this.gap = gap;
 
         centerPanel = new ScrollablePanel(new GridLayout(rows, cols, gap, gap));
         centerPanel.setBackground(LOCANDA_LIGHT);
@@ -761,12 +771,7 @@ class MappaSecondaria extends JFrame {
     // Metodo per aggiornare una cella
     public void updateCell(int r, int c, Color color, String occupant) {
         if (r < 0 || r >= rows || c < 0 || c >= cols) return;
-        displayGrid[r][c].setBackground(color);
-        if (occupant != null && !occupant.isEmpty()) {
-            displayGrid[r][c].setText(occupant.substring(0, 1).toUpperCase());
-        } else {
-            displayGrid[r][c].setText("");
-        }
+        displayGrid[r][c].updateView(color, occupant);
     }
 
     // Aggiorna le dimensioni della griglia
@@ -777,8 +782,7 @@ class MappaSecondaria extends JFrame {
         centerPanel.setPreferredSize(new Dimension(totalWidth, totalHeight));
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                displayGrid[r][c].setPreferredSize(new Dimension(cellSize, cellSize));
-                displayGrid[r][c].setSize(new Dimension(cellSize, cellSize));
+                displayGrid[r][c].setCellSize(cellSize);
             }
         }
         centerPanel.revalidate();
@@ -794,18 +798,60 @@ class MappaSecondaria extends JFrame {
     public void syncScrollHorizontal(int value) {
         centerScrollPane.getViewport().setViewPosition(new Point(value, centerScrollPane.getViewport().getViewPosition().y));
     }
+
+    // Metodi per evidenziare la cella (quando il mouse passa sulla cella corrispondente nella finestra principale)
+    public void highlightCell(int r, int c) {
+        if (r < 0 || r >= rows || c < 0 || c >= cols) return;
+        displayGrid[r][c].setBorder(BorderFactory.createLineBorder(new Color(180, 150, 120), 2));
+    }
+    public void unhighlightCell(int r, int c) {
+        if (r < 0 || r >= rows || c < 0 || c >= cols) return;
+        displayGrid[r][c].setBorder(null);
+    }
 }
 
-// Cella per la finestra secondaria (DisplayCell) senza bordo, con sfondo SAND
+// Cella per la finestra secondaria (DisplayCell) senza bordo, con sfondo SAND e effetto hover
 class DisplayCell extends JLabel {
+    private Color baseColor;
+
     public DisplayCell(int size) {
         setOpaque(true);
-        setBackground(new Color(245, 222, 179)); // SAND
+        baseColor = new Color(245, 222, 179); // SAND
+        setBackground(baseColor);
         setPreferredSize(new Dimension(size, size));
         setHorizontalAlignment(SwingConstants.CENTER);
         setVerticalAlignment(SwingConstants.CENTER);
-        // Rimosso il bordo per avere lo stesso look delle celle della mappa principale
         setFont(new Font("SansSerif", Font.BOLD, 10));
+        // Aggiungiamo anche qui l'effetto hover se il mouse passa direttamente sulla finestra secondaria
+        addMouseListener(new MouseAdapter(){
+            @Override
+            public void mouseEntered(MouseEvent e){
+                setBackground(shadeColor(baseColor, -30));
+            }
+            @Override
+            public void mouseExited(MouseEvent e){
+                setBackground(baseColor);
+            }
+        });
+    }
+
+    public void updateView(Color color, String occupant) {
+        baseColor = color;
+        setBackground(color);
+        setText(occupant == null || occupant.isEmpty() ? "" : occupant.substring(0,1).toUpperCase());
+    }
+
+    private Color shadeColor(Color color, int offset) {
+        int r = Math.max(0, Math.min(255, color.getRed() + offset));
+        int g = Math.max(0, Math.min(255, color.getGreen() + offset));
+        int b = Math.max(0, Math.min(255, color.getBlue() + offset));
+        return new Color(r, g, b);
+    }
+
+    public void setCellSize(int size) {
+        setPreferredSize(new Dimension(size, size));
+        revalidate();
+        repaint();
     }
 }
 
